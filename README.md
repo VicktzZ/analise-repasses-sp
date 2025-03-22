@@ -35,7 +35,7 @@ Este projeto consiste em um dashboard interativo para análise dos repasses fina
 
 1. Clone o repositório:
 ```bash
-git clone [URL_DO_REPOSITORIO]
+git clone https://github.com/VicktzZ/analise-repasses-sp
 ```
 
 2. Instale as dependências:
