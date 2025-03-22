@@ -17,8 +17,14 @@ def main():
         # Carregar dados de comparação
         df = carregar_dados_comparacao()
         
-        if df is None:
-            st.error("Erro ao carregar os dados para comparação.")
+        if df is None or df.empty:
+            st.error("Erro ao carregar os dados para comparação. Verifique se o arquivo de dados existe e está acessível.")
+            return
+        
+        # Verificar se temos dados para ambos os municípios
+        municipios = df['municipio'].unique()
+        if 'cotia' not in municipios or 'itapevi' not in municipios:
+            st.error("Dados incompletos: não foram encontrados dados para ambos os municípios.")
             return
         
         # Métricas Gerais por Município

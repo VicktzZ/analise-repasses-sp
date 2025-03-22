@@ -16,6 +16,9 @@ def main():
         # Carregar dados uma única vez e salvar na sessão
         if 'df_cotia' not in st.session_state:
             df_cotia = carregar_dados_base('cotia')
+            if df_cotia is None or df_cotia.empty:
+                st.error("Erro ao carregar os dados. Verifique se o arquivo de dados existe e está acessível.")
+                return
             st.session_state['df_cotia'] = df_cotia
         else:
             df_cotia = st.session_state['df_cotia']
