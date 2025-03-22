@@ -2,7 +2,7 @@ import pandas as pd
 import streamlit as st
 
 @st.cache_data
-def carregar_dados_base():
+def carregar_dados_base(municipio='cotia'):
     """
     Carrega e prepara os dados base do dashboard.
     Utiliza cache do Streamlit para otimizar o carregamento.
@@ -11,8 +11,8 @@ def carregar_dados_base():
         # Carregar dados do Excel
         df = pd.read_excel('data/repasses.xlsx')
         
-        # Filtrar apenas dados de Cotia
-        df = df[df['municipio'].str.lower() == 'cotia'].copy()
+        # Filtrar apenas dados do município especificado
+        df = df[df['municipio'].str.lower() == municipio.lower()].copy()
         
         # Converter colunas para tipos apropriados
         df['exercicio'] = pd.to_numeric(df['exercicio'], errors='coerce')
@@ -28,6 +28,42 @@ def carregar_dados_base():
         # Otimizar tipos de dados para memória
         df['funcao_de_governo'] = df['funcao_de_governo'].astype('category')
         df['razao_social'] = df['razao_social'].astype('category')
+        df['exercicio'] = df['exercicio'].astype('int32')
+        
+        return df
+        
+    except Exception as e:
+        st.error(f"Erro ao carregar dados: {str(e)}")
+        return None
+
+@st.cache_data
+def carregar_dados_comparacao():
+    """
+    Carrega dados de Cotia e Itapevi para comparação.
+    """
+    try:
+        # Carregar dados do Excel
+        df = pd.read_excel('data/repasses.xlsx')
+        
+        # Filtrar apenas dados de Cotia e Itapevi
+        df = df[df['municipio'].str.lower().isin(['cotia', 'itapevi'])].copy()
+        
+        # Converter colunas para tipos apropriados
+        df['exercicio'] = pd.to_numeric(df['exercicio'], errors='coerce')
+        df['vl_pago'] = pd.to_numeric(df['vl_pago'], errors='coerce')
+        
+        # Limpar e padronizar nomes de colunas
+        df['razao_social'] = df['razao_social'].str.strip().fillna('Não Informado')
+        df['funcao_de_governo'] = df['funcao_de_governo'].str.strip().fillna('Não Informado')
+        df['municipio'] = df['municipio'].str.lower()
+        
+        # Remover linhas com valores nulos em colunas críticas
+        df = df.dropna(subset=['vl_pago', 'exercicio'])
+        
+        # Otimizar tipos de dados para memória
+        df['funcao_de_governo'] = df['funcao_de_governo'].astype('category')
+        df['razao_social'] = df['razao_social'].astype('category')
+        df['municipio'] = df['municipio'].astype('category')
         df['exercicio'] = df['exercicio'].astype('int32')
         
         return df

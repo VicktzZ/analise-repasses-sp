@@ -1,104 +1,113 @@
-# Análise de Repasses Governamentais - Cotia
+# Análise de Repasses Governamentais - Dashboard
 
-Este projeto realiza uma análise detalhada dos repasses financeiros realizados pela Prefeitura de Cotia para entidades do Terceiro Setor. O sistema processa dados oficiais, gerando visualizações e análises estatísticas para melhor compreensão da distribuição desses recursos.
+Este projeto consiste em um dashboard interativo para análise dos repasses financeiros realizados pelas prefeituras de Cotia e Itapevi para entidades do Terceiro Setor. O projeto visa fornecer insights sobre a distribuição e uso desses recursos públicos.
 
-## 🔍 Funcionalidades
+## 📊 Funcionalidades
 
-- Análise temporal dos repasses (2019-2024)
-- Distribuição por função de governo (Saúde, Educação, etc.)
-- Ranking das principais entidades beneficiadas
-- Estatísticas gerais e visualizações gráficas
-- Análise de distribuição dos valores
+### Dashboard Principal (Cotia)
+- Visualização temporal dos repasses
+- Distribuição por função de governo
+- Top entidades beneficiadas
+- Estatísticas e distribuição dos valores
 
-## 📊 Visualizações
+### Tabelas Detalhadas
+- Visualização detalhada dos dados brutos
+- Análises por ano
+- Análises por função
+- Análises por entidade
+- Estatísticas avançadas
 
-O projeto gera quatro tipos de gráficos interativos:
+### Comparação (Cotia vs Itapevi)
+- Métricas comparativas entre municípios
+- Evolução temporal comparativa
+- Distribuição por função de governo
+- Top entidades de cada município
 
-1. Evolução temporal dos repasses
-2. Distribuição por função de governo (Treemap)
-3. Top 10 entidades beneficiadas
-4. Distribuição estatística dos valores (Box Plot)
+## 🎓 Roteiro para Aula
 
-## 🚀 Como Instalar
+### 1. Introdução (15 min)
+- Contextualização do problema
+- Importância da transparência nos repasses públicos
+- Objetivos do projeto
 
-### Pré-requisitos
+### 2. Estrutura do Projeto (20 min)
+- Organização dos arquivos
+  - `dashboard.py`: Dashboard principal
+  - `pages/`: Páginas adicionais
+  - `utils/`: Módulos utilitários
+  - `data/`: Arquivos de dados
+- Fluxo de dados e arquitetura
 
-- Python 3.8 ou superior
-- pip (gerenciador de pacotes Python)
-- Microsoft Excel instalado (necessário para o xlwings)
+### 3. Análise Exploratória (30 min)
+- Carregamento e preparação dos dados
+- Limpeza e transformação
+- Análises estatísticas básicas
+- Visualização de distribuições
 
-### Instalação
+### 4. Desenvolvimento do Dashboard (45 min)
+- Configuração do Streamlit
+- Criação de componentes interativos
+- Implementação de visualizações
+- Otimização de performance
+
+### 5. Análise Comparativa (30 min)
+- Metodologia de comparação
+- Métricas relevantes
+- Interpretação dos resultados
+- Insights principais
+
+### 6. Prática Guiada (40 min)
+- Exercícios práticos
+- Modificação do dashboard
+- Criação de novas visualizações
+- Análise de diferentes aspectos dos dados
+
+## 🛠️ Tecnologias Utilizadas
+
+- Python 3.8+
+- Streamlit
+- Pandas
+- Plotly
+- NumPy
+
+## 📦 Instalação
 
 1. Clone o repositório:
-
 ```bash
-git clone https://github.com/VicktzZ/analise-repasses-sp
-cd projeto-integrador
+git clone [URL_DO_REPOSITORIO]
 ```
 
-2. Crie um ambiente virtual (recomendado):
-
-```bash
-python -m venv venv
-venv\Scripts\activate
-```
-
-3. Instale as dependências:
-
+2. Instale as dependências:
 ```bash
 pip install -r requirements.txt
 ```
 
-## 💻 Como Usar
-
-1. Certifique-se de que o arquivo de dados (`repasses.xlsx`) está na pasta `data/`
-2. Execute o programa:
-
+3. Execute o dashboard:
 ```bash
-python main.py
+streamlit run dashboard.py
 ```
 
-3. Os gráficos serão exibidos automaticamente e as análises serão mostradas no terminal
+## 📚 Recursos de Aprendizagem
 
-## 📁 Estrutura do Projeto
+### Documentação
+- [Streamlit](https://docs.streamlit.io/)
+- [Pandas](https://pandas.pydata.org/docs/)
+- [Plotly](https://plotly.com/python/)
 
-```
-projeto-integrador/
-│
-├── data/
-│   └── repasses.xlsx
-│
-├── scripts/
-│   └── cotia.py
-│
-├── main.py
-├── requirements.txt
-└── README.md
-```
+### Tutoriais Recomendados
+1. Análise de Dados com Python
+2. Visualização de Dados com Plotly
+3. Desenvolvimento de Dashboards com Streamlit
 
-## 📊 Exemplo de Saída
+## 🤝 Contribuição
 
-O programa gera análises como:
+Sinta-se à vontade para contribuir com o projeto:
+1. Faça um Fork do projeto
+2. Crie uma branch para sua feature
+3. Faça commit das mudanças
+4. Faça push para a branch
+5. Abra um Pull Request
 
-- Total de repasses por ano
-- Distribuição por área governamental
-- Ranking das entidades que mais receberam recursos
-- Estatísticas gerais (média, mediana, desvio padrão)
+## 📝 Licença
 
-## 🤝 Contribuindo
-
-Sinta-se à vontade para contribuir com o projeto. Você pode:
-
-1. Abrir issues para reportar problemas
-2. Enviar pull requests com melhorias
-3. Adicionar novas análises ou visualizações
-
-## 📝 Notas
-
-- Os dados devem estar no formato `.xlsx`
-- É necessário ter o Excel instalado para o funcionamento do xlwings
-- Os gráficos são interativos e podem ser explorados na interface
-
-## 📫 Contato
-
-[Vitor Hugo Rodrigues dos Santos/vhrdsantos.contato@gmail.com]
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.

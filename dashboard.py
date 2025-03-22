@@ -15,7 +15,7 @@ def main():
     try:
         # Carregar dados uma única vez e salvar na sessão
         if 'df_cotia' not in st.session_state:
-            df_cotia = carregar_dados_base()
+            df_cotia = carregar_dados_base('cotia')
             st.session_state['df_cotia'] = df_cotia
         else:
             df_cotia = st.session_state['df_cotia']
