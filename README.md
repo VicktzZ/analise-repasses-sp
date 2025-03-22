@@ -68,7 +68,3 @@ Sinta-se à vontade para contribuir com o projeto:
 3. Faça commit das mudanças
 4. Faça push para a branch
 5. Abra um Pull Request
-
-## 📝 Licença
-
-Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
