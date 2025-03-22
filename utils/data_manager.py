@@ -9,12 +9,18 @@ def formatar_valor_reais(valor):
     1234567.89 -> R$ 1,23M
     1234567890.12 -> R$ 1,23B
     """
-    if abs(valor) >= 1_000_000_000:  # Bilhões
-        return f"R$ {valor/1_000_000_000:,.2f}B"
-    elif abs(valor) >= 1_000_000:  # Milhões
-        return f"R$ {valor/1_000_000:,.2f}M"
-    else:  # Valores normais
-        return f"R$ {valor:,.2f}"
+    if valor is None:
+        return "R$ 0,00"
+        
+    try:
+        if abs(valor) >= 1_000_000_000:  # Bilhões
+            return f"R$ {valor/1_000_000_000:,.2f}B"
+        elif abs(valor) >= 1_000_000:  # Milhões
+            return f"R$ {valor/1_000_000:,.2f}M"
+        else:  # Valores normais
+            return f"R$ {valor:,.2f}"
+    except:
+        return "R$ 0,00"
 
 @st.cache_data
 def carregar_dados_base(municipio='cotia'):

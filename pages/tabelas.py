@@ -1,16 +1,16 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-from utils.data_manager import formatar_valor_reais
+from utils.data_manager import formatar_valor_reais as fvr
 
 st.set_page_config(
     page_title="Tabelas - Repasses Cotia",
-    page_icon="📋",
+    page_icon="",
     layout="wide"
 )
 
 def main():
-    st.title("📋 Visualização Detalhada das Tabelas")
+    st.title("Visualização Detalhada das Tabelas")
     
     try:
         # Carregar dados do dashboard principal
@@ -60,7 +60,7 @@ def main():
             # Mostrar dados filtrados
             st.dataframe(
                 df_filtrado.style.format({
-                    'vl_pago': lambda x: formatar_valor_reais(x)
+                    'vl_pago': lambda x: fvr(x)
                 }),
                 height=400
             )
@@ -70,9 +70,9 @@ def main():
             with col1:
                 st.metric("Total de Registros", f"{len(df_filtrado):,}")
             with col2:
-                st.metric("Valor Total", formatar_valor_reais(df_filtrado['vl_pago'].sum()))
+                st.metric("Valor Total", fvr(df_filtrado['vl_pago'].sum()))
             with col3:
-                st.metric("Média por Repasse", formatar_valor_reais(df_filtrado['vl_pago'].mean()))
+                st.metric("Média por Repasse", fvr(df_filtrado['vl_pago'].mean()))
         
         elif visualizacao == "Por Ano":
             st.subheader("Análise Anual dos Repasses")
@@ -105,9 +105,9 @@ def main():
             # Tabela detalhada
             st.dataframe(
                 df_anual.style.format({
-                    'Total': lambda x: formatar_valor_reais(x),
-                    'Média': lambda x: formatar_valor_reais(x),
-                    'Desvio Padrão': lambda x: formatar_valor_reais(x),
+                    'Total': lambda x: fvr(x),
+                    'Média': lambda x: fvr(x),
+                    'Desvio Padrão': lambda x: fvr(x),
                     'Quantidade': '{:,}',
                     'Entidades': '{:,}'
                 })
@@ -141,9 +141,9 @@ def main():
             # Tabela detalhada
             st.dataframe(
                 df_funcao.style.format({
-                    'Total': lambda x: formatar_valor_reais(x),
-                    'Média': lambda x: formatar_valor_reais(x),
-                    'Desvio Padrão': lambda x: formatar_valor_reais(x),
+                    'Total': lambda x: fvr(x),
+                    'Média': lambda x: fvr(x),
+                    'Desvio Padrão': lambda x: fvr(x),
                     'Quantidade': '{:,}',
                     'Entidades': '{:,}'
                 })
@@ -184,8 +184,8 @@ def main():
             # Tabela detalhada
             st.dataframe(
                 df_entidade.style.format({
-                    'Total': lambda x: formatar_valor_reais(x),
-                    'Média': lambda x: formatar_valor_reais(x),
+                    'Total': lambda x: fvr(x),
+                    'Média': lambda x: fvr(x),
                     'Quantidade': '{:,}'
                 })
             )
@@ -241,7 +241,7 @@ def main():
             
             st.dataframe(
                 stats.style.format({
-                    'Valor': lambda x: formatar_valor_reais(x) if isinstance(x, (int, float)) and x > 100 else f"{x:,.4f}"
+                    'Valor': lambda x: fvr(x) if isinstance(x, (int, float)) and x > 100 else f"{x:,.4f}"
                 })
             )
 

@@ -1,10 +1,7 @@
 import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
-from utils.data_manager import *
-
-def formatar_valor_reais(valor):
-    return f"R$ {valor:,.2f}"
+from utils.data_manager import carregar_dados_base, formatar_valor_reais
 
 st.set_page_config(
     page_title="Dashboard - Repasses Cotia",
