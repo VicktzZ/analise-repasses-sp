@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+from utils.data_manager import formatar_valor_reais
 
 st.set_page_config(
     page_title="Tabelas - Repasses Cotia",
@@ -45,7 +46,8 @@ def main():
                     "Faixa de Valor (R$):",
                     valor_min,
                     valor_max,
-                    (valor_min, valor_max)
+                    (valor_min, valor_max),
+                    format="R$ %.2f"
                 )
             
             # Aplicar filtros
@@ -58,7 +60,7 @@ def main():
             # Mostrar dados filtrados
             st.dataframe(
                 df_filtrado.style.format({
-                    'vl_pago': 'R$ {:,.2f}'
+                    'vl_pago': lambda x: formatar_valor_reais(x)
                 }),
                 height=400
             )
@@ -66,11 +68,11 @@ def main():
             # Estatísticas básicas dos dados filtrados
             col1, col2, col3 = st.columns(3)
             with col1:
-                st.metric("Total de Registros", len(df_filtrado))
+                st.metric("Total de Registros", f"{len(df_filtrado):,}")
             with col2:
-                st.metric("Valor Total", f"R$ {df_filtrado['vl_pago'].sum():,.2f}")
+                st.metric("Valor Total", formatar_valor_reais(df_filtrado['vl_pago'].sum()))
             with col3:
-                st.metric("Média por Repasse", f"R$ {df_filtrado['vl_pago'].mean():,.2f}")
+                st.metric("Média por Repasse", formatar_valor_reais(df_filtrado['vl_pago'].mean()))
         
         elif visualizacao == "Por Ano":
             st.subheader("Análise Anual dos Repasses")
@@ -91,14 +93,23 @@ def main():
                 y=['Total', 'Média'],
                 title='Evolução Anual dos Repasses'
             )
+            fig.update_layout(
+                yaxis=dict(tickformat=',.2f', tickprefix='R$ '),
+                hovermode='x unified'
+            )
+            fig.update_traces(
+                hovertemplate="Ano: %{x}<br>Valor: R$ %{y:,.2f}<extra></extra>"
+            )
             st.plotly_chart(fig, use_container_width=True)
             
             # Tabela detalhada
             st.dataframe(
                 df_anual.style.format({
-                    'Total': 'R$ {:,.2f}',
-                    'Média': 'R$ {:,.2f}',
-                    'Desvio Padrão': 'R$ {:,.2f}'
+                    'Total': lambda x: formatar_valor_reais(x),
+                    'Média': lambda x: formatar_valor_reais(x),
+                    'Desvio Padrão': lambda x: formatar_valor_reais(x),
+                    'Quantidade': '{:,}',
+                    'Entidades': '{:,}'
                 })
             )
         
@@ -121,14 +132,20 @@ def main():
                 names='funcao_de_governo',
                 title='Distribuição dos Repasses por Função'
             )
+            fig.update_traces(
+                texttemplate="%{label}<br>R$ %{value:,.2f}",
+                hovertemplate="Função: %{label}<br>Total: R$ %{value:,.2f}<extra></extra>"
+            )
             st.plotly_chart(fig, use_container_width=True)
             
             # Tabela detalhada
             st.dataframe(
                 df_funcao.style.format({
-                    'Total': 'R$ {:,.2f}',
-                    'Média': 'R$ {:,.2f}',
-                    'Desvio Padrão': 'R$ {:,.2f}'
+                    'Total': lambda x: formatar_valor_reais(x),
+                    'Média': lambda x: formatar_valor_reais(x),
+                    'Desvio Padrão': lambda x: formatar_valor_reais(x),
+                    'Quantidade': '{:,}',
+                    'Entidades': '{:,}'
                 })
             )
         
@@ -155,14 +172,21 @@ def main():
                 y='Total',
                 title=f'Top {n_entidades} Entidades por Valor Total'
             )
-            fig.update_layout(xaxis_tickangle=45)
+            fig.update_layout(
+                xaxis_tickangle=45,
+                yaxis=dict(tickformat=',.2f', tickprefix='R$ ')
+            )
+            fig.update_traces(
+                hovertemplate="Entidade: %{x}<br>Total: R$ %{y:,.2f}<extra></extra>"
+            )
             st.plotly_chart(fig, use_container_width=True)
             
             # Tabela detalhada
             st.dataframe(
                 df_entidade.style.format({
-                    'Total': 'R$ {:,.2f}',
-                    'Média': 'R$ {:,.2f}'
+                    'Total': lambda x: formatar_valor_reais(x),
+                    'Média': lambda x: formatar_valor_reais(x),
+                    'Quantidade': '{:,}'
                 })
             )
         
@@ -174,6 +198,16 @@ def main():
                 df_cotia,
                 y='vl_pago',
                 title='Distribuição dos Valores dos Repasses'
+            )
+            fig.update_layout(
+                yaxis=dict(
+                    title='Valor (R$)',
+                    tickformat=',.2f',
+                    tickprefix='R$ '
+                )
+            )
+            fig.update_traces(
+                hovertemplate="Valor: R$ %{y:,.2f}<extra></extra>"
             )
             st.plotly_chart(fig, use_container_width=True)
             
@@ -207,7 +241,7 @@ def main():
             
             st.dataframe(
                 stats.style.format({
-                    'Valor': lambda x: f'R$ {x:,.2f}' if isinstance(x, (int, float)) and x > 100 else f'{x:,.4f}'
+                    'Valor': lambda x: formatar_valor_reais(x) if isinstance(x, (int, float)) and x > 100 else f"{x:,.4f}"
                 })
             )
 

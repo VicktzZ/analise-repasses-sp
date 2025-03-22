@@ -2,7 +2,7 @@ import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
-from utils.data_manager import carregar_dados_comparacao
+from utils.data_manager import carregar_dados_comparacao, formatar_valor_reais
 
 st.set_page_config(
     page_title="Comparação - Cotia vs Itapevi",
@@ -41,15 +41,15 @@ def main():
         
         with col1:
             st.subheader("Cotia")
-            st.metric("Total de Repasses", f"R$ {metricas.loc['cotia', ('vl_pago', 'sum')]:,.2f}")
-            st.metric("Média por Repasse", f"R$ {metricas.loc['cotia', ('vl_pago', 'mean')]:,.2f}")
+            st.metric("Total de Repasses", formatar_valor_reais(metricas.loc['cotia', ('vl_pago', 'sum')]))
+            st.metric("Média por Repasse", formatar_valor_reais(metricas.loc['cotia', ('vl_pago', 'mean')]))
             st.metric("Número de Operações", f"{metricas.loc['cotia', ('vl_pago', 'count')]:,}")
             st.metric("Número de Entidades", f"{metricas.loc['cotia', ('razao_social', 'nunique')]:,}")
         
         with col2:
             st.subheader("Itapevi")
-            st.metric("Total de Repasses", f"R$ {metricas.loc['itapevi', ('vl_pago', 'sum')]:,.2f}")
-            st.metric("Média por Repasse", f"R$ {metricas.loc['itapevi', ('vl_pago', 'mean')]:,.2f}")
+            st.metric("Total de Repasses", formatar_valor_reais(metricas.loc['itapevi', ('vl_pago', 'sum')]))
+            st.metric("Média por Repasse", formatar_valor_reais(metricas.loc['itapevi', ('vl_pago', 'mean')]))
             st.metric("Número de Operações", f"{metricas.loc['itapevi', ('vl_pago', 'count')]:,}")
             st.metric("Número de Entidades", f"{metricas.loc['itapevi', ('razao_social', 'nunique')]:,}")
         
@@ -75,13 +75,18 @@ def main():
                     x=dados_cidade['exercicio'],
                     y=dados_cidade['sum'],
                     name=f'{cidade.title()} - Total',
-                    mode='lines+markers'
+                    mode='lines+markers',
+                    hovertemplate=f"{cidade.title()}<br>Ano: %{{x}}<br>Total: R$ %{{y:,.2f}}<extra></extra>"
                 ))
             
             fig_temporal.update_layout(
                 title='Evolução dos Repasses ao Longo dos Anos',
                 xaxis_title='Ano',
-                yaxis_title='Total de Repasses (R$)',
+                yaxis=dict(
+                    title='Total de Repasses (R$)',
+                    tickformat=',.2f',
+                    tickprefix='R$ '
+                ),
                 hovermode='x unified'
             )
             st.plotly_chart(fig_temporal, use_container_width=True)
@@ -104,7 +109,14 @@ def main():
                     'municipio': 'Município'
                 }
             )
-            fig_funcao.update_layout(xaxis_tickangle=45)
+            fig_funcao.update_layout(
+                xaxis_tickangle=45,
+                yaxis=dict(tickformat=',.2f', tickprefix='R$ ')
+            )
+            fig_funcao.update_traces(
+                hovertemplate="Município: %{customdata}<br>Função: %{x}<br>Total: R$ %{y:,.2f}<extra></extra>",
+                customdata=df_funcao['municipio'].str.title()
+            )
             st.plotly_chart(fig_funcao, use_container_width=True)
             
             # Tabela comparativa
@@ -117,8 +129,8 @@ def main():
             
             st.dataframe(
                 df_funcao_pivot.style.format({
-                    'cotia': 'R$ {:,.2f}',
-                    'itapevi': 'R$ {:,.2f}'
+                    'cotia': lambda x: formatar_valor_reais(x),
+                    'itapevi': lambda x: formatar_valor_reais(x)
                 })
             )
         
@@ -137,7 +149,7 @@ def main():
                 top_cotia = df_entidades[df_entidades['municipio'] == 'cotia'].nlargest(10, 'vl_pago')
                 st.dataframe(
                     top_cotia[['razao_social', 'vl_pago']].style.format({
-                        'vl_pago': 'R$ {:,.2f}'
+                        'vl_pago': lambda x: formatar_valor_reais(x)
                     })
                 )
             
@@ -146,7 +158,7 @@ def main():
                 top_itapevi = df_entidades[df_entidades['municipio'] == 'itapevi'].nlargest(10, 'vl_pago')
                 st.dataframe(
                     top_itapevi[['razao_social', 'vl_pago']].style.format({
-                        'vl_pago': 'R$ {:,.2f}'
+                        'vl_pago': lambda x: formatar_valor_reais(x)
                     })
                 )
 

@@ -3,6 +3,9 @@ import plotly.express as px
 import plotly.graph_objects as go
 from utils.data_manager import *
 
+def formatar_valor_reais(valor):
+    return f"R$ {valor:,.2f}"
+
 st.set_page_config(
     page_title="Dashboard - Repasses Cotia",
     page_icon="📊",
@@ -26,13 +29,13 @@ def main():
         # Métricas Principais
         col1, col2, col3, col4 = st.columns(4)
         with col1:
-            st.metric("Total de Repasses", f"R$ {df_cotia['vl_pago'].sum():,.2f}")
+            st.metric("Total de Repasses", formatar_valor_reais(df_cotia['vl_pago'].sum()))
         with col2:
-            st.metric("Número de Entidades", df_cotia['razao_social'].nunique())
+            st.metric("Número de Entidades", f"{df_cotia['razao_social'].nunique():,}")
         with col3:
-            st.metric("Total de Operações", len(df_cotia))
+            st.metric("Total de Operações", f"{len(df_cotia):,}")
         with col4:
-            st.metric("Média por Repasse", f"R$ {df_cotia['vl_pago'].mean():,.2f}")
+            st.metric("Média por Repasse", formatar_valor_reais(df_cotia['vl_pago'].mean()))
 
         # Tabs para diferentes visualizações
         tab1, tab2, tab3, tab4 = st.tabs(["Evolução Temporal", "Distribuição por Função", "Top Entidades", "Estatísticas"])
@@ -50,18 +53,30 @@ def main():
             fig_temporal.add_trace(go.Bar(
                 x=df_anual.index,
                 y=df_anual[('vl_pago', 'sum')],
-                name='Total Anual'
+                name='Total Anual',
+                hovertemplate="Ano: %{x}<br>Total: " + "R$ %{y:,.2f}<extra></extra>"
             ))
             fig_temporal.add_trace(go.Scatter(
                 x=df_anual.index,
                 y=df_anual[('vl_pago', 'mean')],
                 name='Média por Repasse',
-                yaxis='y2'
+                yaxis='y2',
+                hovertemplate="Ano: %{x}<br>Média: " + "R$ %{y:,.2f}<extra></extra>"
             ))
             fig_temporal.update_layout(
                 title='Evolução dos Repasses ao Longo dos Anos',
-                yaxis=dict(title='Total de Repasses (R$)'),
-                yaxis2=dict(title='Média por Repasse (R$)', overlaying='y', side='right')
+                yaxis=dict(
+                    title='Total de Repasses (R$)',
+                    tickformat=',.2f',
+                    tickprefix='R$ '
+                ),
+                yaxis2=dict(
+                    title='Média por Repasse (R$)',
+                    overlaying='y',
+                    side='right',
+                    tickformat=',.2f',
+                    tickprefix='R$ '
+                )
             )
             st.plotly_chart(fig_temporal, use_container_width=True)
 
@@ -74,6 +89,10 @@ def main():
                 path=['funcao_de_governo'],
                 values='vl_pago',
                 title='Distribuição dos Repasses por Função de Governo'
+            )
+            fig_funcao.update_traces(
+                textinfo="label+value",
+                texttemplate="%{label}<br>R$ %{value:,.2f}"
             )
             st.plotly_chart(fig_funcao, use_container_width=True)
 
@@ -96,7 +115,13 @@ def main():
                 title=f'Top {n_top} Entidades por Valor Total de Repasses',
                 labels={'razao_social': 'Entidade', 'vl_pago': 'Valor Total (R$)'}
             )
-            fig_entidades.update_layout(xaxis_tickangle=45)
+            fig_entidades.update_traces(
+                hovertemplate="Entidade: %{x}<br>Total: R$ %{y:,.2f}<extra></extra>"
+            )
+            fig_entidades.update_layout(
+                xaxis_tickangle=45,
+                yaxis=dict(tickformat=',.2f', tickprefix='R$ ')
+            )
             st.plotly_chart(fig_entidades, use_container_width=True)
 
         with tab4:
@@ -106,11 +131,17 @@ def main():
             fig_dist = go.Figure()
             fig_dist.add_trace(go.Box(
                 y=df_cotia['vl_pago'],
-                name='Distribuição dos Valores'
+                name='Distribuição dos Valores',
+                boxpoints='outliers',
+                hovertemplate="Valor: R$ %{y:,.2f}<extra></extra>"
             ))
             fig_dist.update_layout(
                 title='Distribuição dos Valores dos Repasses',
-                yaxis_title='Valor (R$)'
+                yaxis=dict(
+                    title='Valor (R$)',
+                    tickformat=',.2f',
+                    tickprefix='R$ '
+                )
             )
             st.plotly_chart(fig_dist, use_container_width=True)
 
@@ -138,9 +169,11 @@ def main():
                 ]
             })
             
-            st.dataframe(stats.style.format({
-                'Valor': lambda x: f'R$ {x:,.2f}' if isinstance(x, (int, float)) and x > 100 else f'{x:,}'
-            }))
+            st.dataframe(
+                stats.style.format({
+                    'Valor': lambda x: formatar_valor_reais(x) if isinstance(x, (int, float)) and x > 100 else f"{x:,}"
+                })
+            )
 
     except Exception as e:
         st.error(f"Erro ao processar os dados: {str(e)}")

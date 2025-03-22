@@ -1,6 +1,21 @@
 import pandas as pd
 import streamlit as st
 
+def formatar_valor_reais(valor):
+    """
+    Formata um valor numérico para o formato de moeda brasileira.
+    Exemplos:
+    1234.56 -> R$ 1.234,56
+    1234567.89 -> R$ 1,23M
+    1234567890.12 -> R$ 1,23B
+    """
+    if abs(valor) >= 1_000_000_000:  # Bilhões
+        return f"R$ {valor/1_000_000_000:,.2f}B"
+    elif abs(valor) >= 1_000_000:  # Milhões
+        return f"R$ {valor/1_000_000:,.2f}M"
+    else:  # Valores normais
+        return f"R$ {valor:,.2f}"
+
 @st.cache_data
 def carregar_dados_base(municipio='cotia'):
     """
