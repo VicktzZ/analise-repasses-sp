@@ -1,6 +1,7 @@
 import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
+import pandas as pd
 from utils.data_manager import carregar_dados_base, formatar_valor_reais
 
 st.set_page_config(
