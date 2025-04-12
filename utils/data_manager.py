@@ -25,34 +25,30 @@ def formatar_valor_reais(valor):
 @st.cache_data
 def carregar_dados_base(municipio='cotia'):
     """
-    Carrega e prepara os dados base do dashboard.
-    Utiliza cache do Streamlit para otimizar o carregamento.
+    Carrega os dados base do município especificado.
+    Args:
+        municipio (str): Nome do município (cotia, itapevi ou vargem_grande_paulista)
+    Returns:
+        DataFrame: Dados do município
     """
     try:
         # Carregar dados do Excel
         df = pd.read_excel('data/repasses.xlsx')
         
-        # Filtrar apenas dados do município especificado
-        df = df[df['municipio'].str.lower() == municipio.lower()].copy()
+        # Converter para minúsculas
+        df['municipio'] = df['municipio'].str.lower()
         
-        # Converter colunas para tipos apropriados
-        df['exercicio'] = pd.to_numeric(df['exercicio'], errors='coerce')
-        df['vl_pago'] = pd.to_numeric(df['vl_pago'], errors='coerce')
+        # Padronizar o nome de Vargem Grande Paulista (caso haja variações)
+        df.loc[df['municipio'].str.contains('vargem'), 'municipio'] = 'vargem_grande_paulista'
         
-        # Limpar e padronizar nomes de colunas
-        df['razao_social'] = df['razao_social'].str.strip().fillna('Não Informado')
-        df['funcao_de_governo'] = df['funcao_de_governo'].str.strip().fillna('Não Informado')
+        # Filtrar pelo município
+        df = df[df['municipio'] == municipio.lower()]
         
-        # Remover linhas com valores nulos em colunas críticas
-        df = df.dropna(subset=['vl_pago', 'exercicio'])
-        
-        # Otimizar tipos de dados para memória
-        df['funcao_de_governo'] = df['funcao_de_governo'].astype('category')
-        df['razao_social'] = df['razao_social'].astype('category')
+        # Otimizar tipos de dados
         df['exercicio'] = df['exercicio'].astype('int32')
+        df['vl_pago'] = df['vl_pago'].astype('float64')
         
         return df
-        
     except Exception as e:
         st.error(f"Erro ao carregar dados: {str(e)}")
         return None
@@ -60,35 +56,29 @@ def carregar_dados_base(municipio='cotia'):
 @st.cache_data
 def carregar_dados_comparacao():
     """
-    Carrega dados de Cotia e Itapevi para comparação.
+    Carrega os dados para comparação entre Cotia, Itapevi e Vargem Grande Paulista.
+    Returns:
+        DataFrame: Dados combinados dos três municípios
     """
     try:
         # Carregar dados do Excel
         df = pd.read_excel('data/repasses.xlsx')
         
-        # Filtrar apenas dados de Cotia e Itapevi
-        df = df[df['municipio'].str.lower().isin(['cotia', 'itapevi'])].copy()
-        
-        # Converter colunas para tipos apropriados
-        df['exercicio'] = pd.to_numeric(df['exercicio'], errors='coerce')
-        df['vl_pago'] = pd.to_numeric(df['vl_pago'], errors='coerce')
-        
-        # Limpar e padronizar nomes de colunas
-        df['razao_social'] = df['razao_social'].str.strip().fillna('Não Informado')
-        df['funcao_de_governo'] = df['funcao_de_governo'].str.strip().fillna('Não Informado')
+        # Converter para minúsculas
         df['municipio'] = df['municipio'].str.lower()
         
-        # Remover linhas com valores nulos em colunas críticas
-        df = df.dropna(subset=['vl_pago', 'exercicio'])
+        # Padronizar o nome de Vargem Grande Paulista (caso haja variações)
+        df.loc[df['municipio'].str.contains('vargem'), 'municipio'] = 'vargem_grande_paulista'
         
-        # Otimizar tipos de dados para memória
-        df['funcao_de_governo'] = df['funcao_de_governo'].astype('category')
-        df['razao_social'] = df['razao_social'].astype('category')
-        df['municipio'] = df['municipio'].astype('category')
+        # Filtrar apenas os municípios de interesse
+        municipios = ['cotia', 'itapevi', 'vargem_grande_paulista']
+        df = df[df['municipio'].isin(municipios)]
+        
+        # Otimizar tipos de dados
         df['exercicio'] = df['exercicio'].astype('int32')
+        df['vl_pago'] = df['vl_pago'].astype('float64')
         
         return df
-        
     except Exception as e:
         st.error(f"Erro ao carregar dados: {str(e)}")
         return None
