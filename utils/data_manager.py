@@ -56,9 +56,9 @@ def carregar_dados_base(municipio='cotia'):
 @st.cache_data
 def carregar_dados_comparacao():
     """
-    Carrega os dados para comparação entre Cotia, Itapevi e Vargem Grande Paulista.
+    Carrega os dados para comparação entre Cotia, Itapevi, Barueri, Jandira e Taboão da Serra.
     Returns:
-        DataFrame: Dados combinados dos três municípios
+        DataFrame: Dados combinados dos cinco municípios
     """
     try:
         # Carregar dados do Excel
@@ -67,11 +67,8 @@ def carregar_dados_comparacao():
         # Converter para minúsculas
         df['municipio'] = df['municipio'].str.lower()
         
-        # Padronizar o nome de Vargem Grande Paulista (caso haja variações)
-        df.loc[df['municipio'].str.contains('vargem'), 'municipio'] = 'vargem_grande_paulista'
-        
         # Filtrar apenas os municípios de interesse
-        municipios = ['cotia', 'itapevi', 'vargem_grande_paulista']
+        municipios = ['cotia', 'itapevi', 'barueri', 'jandira', 'taboão da serra']
         df = df[df['municipio'].isin(municipios)]
         
         # Otimizar tipos de dados

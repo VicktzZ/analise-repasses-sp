@@ -11,7 +11,7 @@ st.set_page_config(
 )
 
 def main():
-    st.title(" Comparação: Cotia, Itapevi e Vargem Grande Paulista")
+    st.title(" Comparação: Cotia, Itapevi, Barueri, Jandira e Taboão da Serra")
     
     try:
         # Carregar dados de comparação
@@ -23,7 +23,7 @@ def main():
         
         # Verificar se temos dados para todos os municípios
         municipios = df['municipio'].unique()
-        municipios_esperados = ['cotia', 'itapevi', 'vargem_grande_paulista']
+        municipios_esperados = ['cotia', 'itapevi', 'barueri', 'jandira', 'taboão da serra']
         municipios_faltando = [m for m in municipios_esperados if m not in municipios]
         
         if municipios_faltando:
@@ -39,7 +39,7 @@ def main():
         }).round(2)
         
         # Organizar métricas em colunas
-        col1, col2, col3 = st.columns(3)
+        col1, col2, col3, col4, col5 = st.columns(5)
         
         with col1:
             st.subheader("Cotia")
@@ -62,14 +62,34 @@ def main():
                 st.info("Dados não disponíveis para Itapevi")
         
         with col3:
-            st.subheader("Vargem Grande Paulista")
-            if 'vargem_grande_paulista' in municipios:
-                st.metric("Total de Repasses", formatar_valor_reais(metricas.loc['vargem_grande_paulista', ('vl_pago', 'sum')]))
-                st.metric("Média por Repasse", formatar_valor_reais(metricas.loc['vargem_grande_paulista', ('vl_pago', 'mean')]))
-                st.metric("Número de Operações", f"{metricas.loc['vargem_grande_paulista', ('vl_pago', 'count')]:,}")
-                st.metric("Número de Entidades", f"{metricas.loc['vargem_grande_paulista', ('razao_social', 'nunique')]:,}")
+            st.subheader("Barueri")
+            if 'barueri' in municipios:
+                st.metric("Total de Repasses", formatar_valor_reais(metricas.loc['barueri', ('vl_pago', 'sum')]))
+                st.metric("Média por Repasse", formatar_valor_reais(metricas.loc['barueri', ('vl_pago', 'mean')]))
+                st.metric("Número de Operações", f"{metricas.loc['barueri', ('vl_pago', 'count')]:,}")
+                st.metric("Número de Entidades", f"{metricas.loc['barueri', ('razao_social', 'nunique')]:,}")
             else:
-                st.info("Dados não disponíveis para Vargem Grande Paulista")
+                st.info("Dados não disponíveis para Barueri")
+        
+        with col4:
+            st.subheader("Jandira")
+            if 'jandira' in municipios:
+                st.metric("Total de Repasses", formatar_valor_reais(metricas.loc['jandira', ('vl_pago', 'sum')]))
+                st.metric("Média por Repasse", formatar_valor_reais(metricas.loc['jandira', ('vl_pago', 'mean')]))
+                st.metric("Número de Operações", f"{metricas.loc['jandira', ('vl_pago', 'count')]:,}")
+                st.metric("Número de Entidades", f"{metricas.loc['jandira', ('razao_social', 'nunique')]:,}")
+            else:
+                st.info("Dados não disponíveis para Jandira")
+        
+        with col5:
+            st.subheader("Taboão da Serra")
+            if 'taboão da serra' in municipios:
+                st.metric("Total de Repasses", formatar_valor_reais(metricas.loc['taboão da serra', ('vl_pago', 'sum')]))
+                st.metric("Média por Repasse", formatar_valor_reais(metricas.loc['taboão da serra', ('vl_pago', 'mean')]))
+                st.metric("Número de Operações", f"{metricas.loc['taboão da serra', ('vl_pago', 'count')]:,}")
+                st.metric("Número de Entidades", f"{metricas.loc['taboão da serra', ('razao_social', 'nunique')]:,}")
+            else:
+                st.info("Dados não disponíveis para Taboão da Serra")
         
         # Análises Comparativas
         st.header("Análises Comparativas")
@@ -90,12 +110,14 @@ def main():
             cores = {
                 'cotia': 'blue',
                 'itapevi': 'red',
-                'vargem_grande_paulista': 'green'
+                'barueri': 'yellow',
+                'jandira': 'green',
+                'taboão da serra': 'purple'
             }
             
             for cidade in municipios:
                 dados_cidade = df_temporal[df_temporal['municipio'] == cidade]
-                nome_cidade = 'Vargem Grande P.' if cidade == 'vargem_grande_paulista' else cidade.title()
+                nome_cidade = 'Taboão da Serra' if cidade == 'taboão da serra' else cidade.title()
                 
                 fig_temporal.add_trace(go.Scatter(
                     x=dados_cidade['exercicio'],
@@ -124,7 +146,7 @@ def main():
             
             for cidade in municipios:
                 dados_cidade = df_temporal[df_temporal['municipio'] == cidade]
-                nome_cidade = 'Vargem Grande P.' if cidade == 'vargem_grande_paulista' else cidade.title()
+                nome_cidade = 'Taboão da Serra' if cidade == 'taboão da serra' else cidade.title()
                 
                 fig_media.add_trace(go.Scatter(
                     x=dados_cidade['exercicio'],
@@ -156,14 +178,16 @@ def main():
             nomes_municipios = {
                 'cotia': 'Cotia',
                 'itapevi': 'Itapevi',
-                'vargem_grande_paulista': 'Vargem Grande P.'
+                'taboão da serra': 'Taboão da Serra',
+                'jandira': 'Jandira',
+                'barueri': 'Barueri'
             }
             
             df_funcao['municipio_exibicao'] = df_funcao['municipio'].map(nomes_municipios)
             
             # Gráfico de barras lado a lado
             fig_funcao = px.bar(
-                df_funcao,
+                df_funcao[df_funcao['municipio'].isin(municipios)],
                 x='funcao_de_governo',
                 y='vl_pago',
                 color='municipio_exibicao',
@@ -177,7 +201,9 @@ def main():
                 color_discrete_map={
                     'Cotia': 'blue',
                     'Itapevi': 'red',
-                    'Vargem Grande P.': 'green'
+                    'Taboão da Serra': 'green',
+                    'Jandira': 'yellow',
+                    'Barueri': 'purple'
                 }
             )
             fig_funcao.update_layout(
@@ -214,8 +240,8 @@ def main():
             # Calcular top entidades para cada município
             df_entidades = df.groupby(['municipio', 'razao_social'])['vl_pago'].sum().reset_index()
             
-            # Criar três colunas para mostrar os tops lado a lado
-            col1, col2, col3 = st.columns(3)
+            # Criar quatro colunas para mostrar os tops lado a lado
+            col1, col2, col3, col4, col5 = st.columns(5)
             
             with col1:
                 st.subheader("Cotia")
@@ -242,16 +268,40 @@ def main():
                     st.info("Dados não disponíveis para Itapevi")
             
             with col3:
-                st.subheader("Vargem Grande Paulista")
-                if 'vargem_grande_paulista' in municipios:
-                    top_vgp = df_entidades[df_entidades['municipio'] == 'vargem_grande_paulista'].nlargest(10, 'vl_pago')
+                st.subheader("Taboão da Serra")
+                if 'taboão da serra' in municipios:
+                    top_taboao = df_entidades[df_entidades['municipio'] == 'taboão da serra'].nlargest(10, 'vl_pago')
                     st.dataframe(
-                        top_vgp[['razao_social', 'vl_pago']].style.format({
+                        top_taboao[['razao_social', 'vl_pago']].style.format({
                             'vl_pago': lambda x: formatar_valor_reais(x)
                         })
                     )
                 else:
-                    st.info("Dados não disponíveis para Vargem Grande Paulista")
+                    st.info("Dados não disponíveis para Taboão da Serra")
+            
+            with col4:
+                st.subheader("Jandira")
+                if 'jandira' in municipios:
+                    top_jandira = df_entidades[df_entidades['municipio'] == 'jandira'].nlargest(10, 'vl_pago')
+                    st.dataframe(
+                        top_jandira[['razao_social', 'vl_pago']].style.format({
+                            'vl_pago': lambda x: formatar_valor_reais(x)
+                        })
+                    )
+                else:
+                    st.info("Dados não disponíveis para Jandira")
+            
+            with col5:
+                st.subheader("Barueri")
+                if 'barueri' in municipios:
+                    top_barueri = df_entidades[df_entidades['municipio'] == 'barueri'].nlargest(10, 'vl_pago')
+                    st.dataframe(
+                        top_barueri[['razao_social', 'vl_pago']].style.format({
+                            'vl_pago': lambda x: formatar_valor_reais(x)
+                        })
+                    )
+                else:
+                    st.info("Dados não disponíveis para Barueri")
 
     except Exception as e:
         st.error(f"Erro ao processar os dados: {str(e)}")
