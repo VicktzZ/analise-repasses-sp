@@ -1,70 +1,55 @@
-# Análise de Repasses Governamentais - Dashboard
+# Public Transfers to Non-Profits: São Paulo Metro West
 
-Este projeto consiste em um dashboard interativo para análise dos repasses financeiros realizados pelas prefeituras de Cotia e Itapevi para entidades do Terceiro Setor. O projeto visa fornecer insights sobre a distribuição e uso desses recursos públicos.
+An interactive dashboard that analyzes public money paid by municipal
+governments to third-sector organizations (non-profits) in the western part of
+Greater São Paulo, Brazil.
 
-## 📊 Funcionalidades
+The dataset holds 7,711 payment records from 2019 to 2024 across six
+municipalities: Barueri, Carapicuíba, Taboão da Serra, Cotia, Itapevi and
+Jandira.
 
-### Dashboard Principal (Cotia)
-- Visualização temporal dos repasses
-- Distribuição por função de governo
-- Top entidades beneficiadas
-- Estatísticas e distribuição dos valores
+## Questions it answers
 
-### Tabelas Detalhadas
-- Visualização detalhada dos dados brutos
-- Análises por ano
-- Análises por função
-- Análises por entidade
-- Estatísticas avançadas
+- How did the amount transferred change year over year?
+- Which government functions receive the most?
+- Which organizations receive the most, and how concentrated is the spending?
+- How does one municipality compare with its neighbors?
 
-### Comparação (Cotia vs Itapevi)
-- Métricas comparativas entre municípios
-- Evolução temporal comparativa
-- Distribuição por função de governo
-- Top entidades de cada município
+## Pages
 
-## 🛠️ Tecnologias Utilizadas
+| Page | Content |
+| --- | --- |
+| Main dashboard | Cotia: totals, yearly evolution, distribution by government function, top recipients, value statistics |
+| Tables | Raw records with breakdowns by year, function and organization |
+| Comparison | Side-by-side metrics, yearly evolution, function distribution and top recipients across municipalities |
 
-- Python 3.8+
-- Streamlit
-- Pandas
-- Plotly
-- NumPy
+## Stack
 
-## 📦 Instalação
+Python, Streamlit, pandas, Plotly, NumPy.
 
-1. Clone o repositório:
+## Running it
+
 ```bash
 git clone https://github.com/VicktzZ/analise-repasses-sp
-```
-
-2. Instale as dependências:
-```bash
+cd analise-repasses-sp
 pip install -r requirements.txt
+streamlit run dashboard.py
 ```
 
-3. Execute o dashboard:
-```bash
-python -m streamlit run dashboard.py
+## Project layout
+
+```
+dashboard.py            Main page
+pages/                  Tables and comparison pages
+utils/data_manager.py   Cached loading, filtering and currency formatting
+scripts/cotia.py        Standalone exploratory analysis
+data/repasses.xlsx      Source records
 ```
 
-## 📚 Recursos de Aprendizagem
+## Data
 
-### Documentação
-- [Streamlit](https://docs.streamlit.io/)
-- [Pandas](https://pandas.pydata.org/docs/)
-- [Plotly](https://plotly.com/python/)
+Each record carries the fiscal year, municipality, paying body, recipient
+organization (name and CNPJ), government function, transfer type, funding
+source and amount paid.
 
-### Tutoriais Recomendados
-1. Análise de Dados com Python
-2. Visualização de Dados com Plotly
-3. Desenvolvimento de Dashboards com Streamlit
-
-## 🤝 Contribuição
-
-Sinta-se à vontade para contribuir com o projeto:
-1. Faça um Fork do projeto
-2. Crie uma branch para sua feature
-3. Faça commit das mudanças
-4. Faça push para a branch
-5. Abra um Pull Request
+The interface is in Portuguese.
